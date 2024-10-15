@@ -2,7 +2,7 @@
 [TvBox](https://github.com/muedsa/TvBox)的demo插件
 
 ## Use this template(使用此仓库作为模板)
-
+本仓库使用**git submodule**,请在项目Clone后使用`git submodule update --init --recursive`拉取子模块。  
 你需要修改以下位置
 - [ ] [settings.gradle.kts](settings.gradle.kts) 中的 `rootProject.name = "你的项目名称"`
 - [ ] [app/src/main/res/values/strings.xml](app/src/main/res/values/strings.xml) 中的 `<string name="app_name">你的插件名称</string>`
