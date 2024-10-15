@@ -9,5 +9,5 @@ data class BangumiSearchResp<T>(
     @SerialName("success") val success: Boolean = false,
     @SerialName("errorCode") val errorCode: Int = -1,
     @SerialName("errorMessage") val errorMessage: String = "",
-    @SerialName("animes") val animes: List<T> = emptyList()
+    @SerialName("animes") val animes: List<T>? = null
 )

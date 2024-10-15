@@ -16,7 +16,7 @@ class MediaSearchService(
             title = "search list",
             cardWidth = 210 / 2,
             cardHeight = 302 / 2,
-            list = resp.animes.map {
+            list = resp.animes?.map {
                 MediaCard(
                     id = it.animeId.toString(),
                     title = it.animeTitle,
@@ -24,7 +24,7 @@ class MediaSearchService(
                     coverImageUrl = it.imageUrl,
                     subTitle = it.startOnlyDate
                 )
-            }
+            } ?: emptyList()
         )
     }
 }
