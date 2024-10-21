@@ -2,7 +2,7 @@ package com.muedsa.tvbox.demoplugin
 
 import org.junit.Test
 
-class DemoPluginTest {
+class PluginTest {
 
     @Test
     fun create_test() {

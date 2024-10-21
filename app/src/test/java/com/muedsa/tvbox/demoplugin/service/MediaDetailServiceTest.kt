@@ -1,6 +1,8 @@
 package com.muedsa.tvbox.demoplugin.service
 
+import com.muedsa.tvbox.api.data.MediaCardType
 import com.muedsa.tvbox.demoplugin.TestPlugin
+import com.muedsa.tvbox.demoplugin.checkMediaCard
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -15,9 +17,7 @@ class MediaDetailServiceTest {
         check(detail.title.isNotEmpty())
         check(detail.detailUrl.isNotEmpty())
         check(detail.backgroundImageUrl.isNotEmpty())
-        check(detail.favoritedMediaCard.id.isNotEmpty())
-        check(detail.favoritedMediaCard.title.isNotEmpty())
-        check(detail.favoritedMediaCard.detailUrl.isNotEmpty())
+        checkMediaCard(detail.favoritedMediaCard, cardType = MediaCardType.STANDARD)
         check(detail.favoritedMediaCard.cardWidth > 0)
         check(detail.favoritedMediaCard.cardHeight > 0)
         check(detail.playSourceList.isNotEmpty())
