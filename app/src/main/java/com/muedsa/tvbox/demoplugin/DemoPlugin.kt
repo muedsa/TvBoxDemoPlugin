@@ -11,6 +11,7 @@ import com.muedsa.tvbox.demoplugin.service.DanDanPlayApiService
 import com.muedsa.tvbox.demoplugin.service.MainScreenService
 import com.muedsa.tvbox.demoplugin.service.MediaDetailService
 import com.muedsa.tvbox.demoplugin.service.MediaSearchService
+import com.muedsa.tvbox.tool.PluginStoreCookieJar
 import com.muedsa.tvbox.tool.createJsonRetrofit
 import timber.log.Timber
 
@@ -32,7 +33,8 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
         createJsonRetrofit(
             baseUrl = "https://api.dandanplay.net/api/",
             service = DanDanPlayApiService::class.java,
-            debug = tvBoxContext.debug
+            debug = tvBoxContext.debug,
+            cookieJar = PluginStoreCookieJar(tvBoxContext.store)
         )
     }
     private val mainScreenService by lazy { MainScreenService(danDanPlayApiService) }
