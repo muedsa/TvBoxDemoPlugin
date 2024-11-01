@@ -3,6 +3,7 @@ package com.muedsa.tvbox.demoplugin.service
 import com.muedsa.tvbox.api.data.MediaCardType
 import com.muedsa.tvbox.demoplugin.TestPlugin
 import com.muedsa.tvbox.demoplugin.checkMediaCard
+import com.muedsa.tvbox.demoplugin.checkMediaCardRow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -29,6 +30,9 @@ class MediaDetailServiceTest {
                 check(it.id.isNotEmpty())
                 check(it.name.isNotEmpty())
             }
+        }
+        detail.rows.forEach {
+            checkMediaCardRow(it)
         }
     }
 
