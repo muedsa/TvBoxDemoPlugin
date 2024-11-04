@@ -11,13 +11,16 @@ import com.muedsa.tvbox.demoplugin.service.DanDanPlayApiService
 import com.muedsa.tvbox.demoplugin.service.MainScreenService
 import com.muedsa.tvbox.demoplugin.service.MediaDetailService
 import com.muedsa.tvbox.demoplugin.service.MediaSearchService
-import com.muedsa.tvbox.tool.PluginStoreCookieJar
+import com.muedsa.tvbox.tool.PluginCookieJar
+import com.muedsa.tvbox.tool.SharedCookieSaver
 import com.muedsa.tvbox.tool.createJsonRetrofit
 import timber.log.Timber
 
 class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxContext) {
 
     private val store: IPluginPerfStore = tvBoxContext.store
+
+    private val cookieSaver by lazy { SharedCookieSaver(store = store) }
 
     override var options: PluginOptions = PluginOptions(enableDanDanPlaySearch = true)
 
@@ -34,7 +37,7 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
             baseUrl = "https://api.dandanplay.net/api/",
             service = DanDanPlayApiService::class.java,
             debug = tvBoxContext.debug,
-            cookieJar = PluginStoreCookieJar(tvBoxContext.store)
+            cookieJar = PluginCookieJar(saver = cookieSaver)
         )
     }
     private val mainScreenService by lazy { MainScreenService(danDanPlayApiService) }
