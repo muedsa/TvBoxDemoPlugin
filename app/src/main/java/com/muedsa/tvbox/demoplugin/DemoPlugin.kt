@@ -41,7 +41,7 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
             okHttpClient = createOkHttpClient(
                 debug = tvBoxContext.debug,
                 cookieJar = PluginCookieJar(saver = cookieSaver),
-                onlyIpv4 = tvBoxContext.iPv6Status == IPv6Checker.IPv6Status.SUPPORTED
+                onlyIpv4 = tvBoxContext.iPv6Status != IPv6Checker.IPv6Status.SUPPORTED
             )
         )
     }
