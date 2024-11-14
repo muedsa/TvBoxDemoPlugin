@@ -11,9 +11,11 @@ import com.muedsa.tvbox.demoplugin.service.DanDanPlayApiService
 import com.muedsa.tvbox.demoplugin.service.MainScreenService
 import com.muedsa.tvbox.demoplugin.service.MediaDetailService
 import com.muedsa.tvbox.demoplugin.service.MediaSearchService
+import com.muedsa.tvbox.tool.IPv6Checker
 import com.muedsa.tvbox.tool.PluginCookieJar
 import com.muedsa.tvbox.tool.SharedCookieSaver
 import com.muedsa.tvbox.tool.createJsonRetrofit
+import com.muedsa.tvbox.tool.createOkHttpClient
 import timber.log.Timber
 
 class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxContext) {
@@ -36,8 +38,11 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
         createJsonRetrofit(
             baseUrl = "https://api.dandanplay.net/api/",
             service = DanDanPlayApiService::class.java,
-            debug = tvBoxContext.debug,
-            cookieJar = PluginCookieJar(saver = cookieSaver)
+            okHttpClient = createOkHttpClient(
+                debug = tvBoxContext.debug,
+                cookieJar = PluginCookieJar(saver = cookieSaver),
+                onlyIpv4 = tvBoxContext.iPv6Status == IPv6Checker.IPv6Status.SUPPORTED
+            )
         )
     }
     private val mainScreenService by lazy { MainScreenService(danDanPlayApiService) }
