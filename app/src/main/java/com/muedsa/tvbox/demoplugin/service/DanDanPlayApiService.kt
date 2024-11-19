@@ -3,6 +3,7 @@ package com.muedsa.tvbox.demoplugin.service
 import com.muedsa.tvbox.demoplugin.model.BangumiSearchResp
 import com.muedsa.tvbox.demoplugin.model.BangumiDetailsResp
 import com.muedsa.tvbox.demoplugin.model.BangumiSearch
+import com.muedsa.tvbox.demoplugin.model.BangumiSeasonsResp
 import com.muedsa.tvbox.demoplugin.model.BangumiShinResp
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -24,4 +25,12 @@ interface DanDanPlayApiService {
         @Path("animeId") animeId: Int
     ): BangumiDetailsResp
 
+    @GET("v2/bangumi/season/anime")
+    suspend fun getSeasonYearMonth(): BangumiSeasonsResp
+
+    @GET("v2/bangumi/season/anime/{year}/{month}")
+    suspend fun getSeasonAnime(
+        @Path("year") year: String,
+        @Path("month") month: String
+    ): BangumiShinResp
 }

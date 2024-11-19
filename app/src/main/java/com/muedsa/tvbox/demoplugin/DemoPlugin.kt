@@ -4,11 +4,13 @@ import com.muedsa.tvbox.api.plugin.IPlugin
 import com.muedsa.tvbox.api.plugin.PluginOptions
 import com.muedsa.tvbox.api.plugin.TvBoxContext
 import com.muedsa.tvbox.api.service.IMainScreenService
+import com.muedsa.tvbox.api.service.IMediaCatalogService
 import com.muedsa.tvbox.api.service.IMediaDetailService
 import com.muedsa.tvbox.api.service.IMediaSearchService
 import com.muedsa.tvbox.api.store.IPluginPerfStore
 import com.muedsa.tvbox.demoplugin.service.DanDanPlayApiService
 import com.muedsa.tvbox.demoplugin.service.MainScreenService
+import com.muedsa.tvbox.demoplugin.service.MediaCatalogService
 import com.muedsa.tvbox.demoplugin.service.MediaDetailService
 import com.muedsa.tvbox.demoplugin.service.MediaSearchService
 import com.muedsa.tvbox.tool.IPv6Checker
@@ -48,10 +50,13 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
     private val mainScreenService by lazy { MainScreenService(danDanPlayApiService) }
     private val mediaDetailService by lazy { MediaDetailService(danDanPlayApiService) }
     private val mediaSearchService by lazy { MediaSearchService(danDanPlayApiService) }
+    private val mediaCatalogService by lazy { MediaCatalogService(danDanPlayApiService) }
 
     override fun provideMainScreenService(): IMainScreenService = mainScreenService
 
     override fun provideMediaDetailService(): IMediaDetailService = mediaDetailService
 
     override fun provideMediaSearchService(): IMediaSearchService = mediaSearchService
+
+    override fun provideMediaCatalogService(): IMediaCatalogService = mediaCatalogService
 }

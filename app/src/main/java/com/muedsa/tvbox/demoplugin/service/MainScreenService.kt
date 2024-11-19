@@ -3,6 +3,7 @@ package com.muedsa.tvbox.demoplugin.service
 import com.muedsa.tvbox.api.data.MediaCard
 import com.muedsa.tvbox.api.data.MediaCardRow
 import com.muedsa.tvbox.api.service.IMainScreenService
+import com.muedsa.tvbox.demoplugin.helper.splitListBySize
 
 class MainScreenService(
     private val danDanPlayApiService: DanDanPlayApiService
@@ -33,15 +34,5 @@ class MainScreenService(
                 }
             )
         }
-    }
-
-    private fun <T> splitListBySize(inputList: List<T>, size: Int): List<List<T>> {
-        val result = mutableListOf<List<T>>()
-        var index = 0
-        while (index < inputList.size) {
-            result.add(inputList.subList(index, (index + size).coerceAtMost(inputList.size)))
-            index += size
-        }
-        return result
     }
 }
