@@ -34,4 +34,9 @@ class PluginTest {
     fun provideMediaSearchService_test() {
         TestPlugin.provideMediaSearchService()
     }
+
+    @Test
+    fun provideMediaCatalogService_test() {
+        TestPlugin.provideMediaCatalogService()
+    }
 }
