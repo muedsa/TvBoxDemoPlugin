@@ -1,5 +1,7 @@
 package com.muedsa.tvbox.demoplugin.service
 
+import com.muedsa.tvbox.api.data.DanmakuData
+import com.muedsa.tvbox.api.data.DanmakuDataFlow
 import com.muedsa.tvbox.api.data.MediaDetail
 import com.muedsa.tvbox.api.data.MediaEpisode
 import com.muedsa.tvbox.api.data.MediaHttpSource
@@ -51,4 +53,9 @@ class MediaDetailService(
         playSource: MediaPlaySource,
         episode: MediaEpisode
     ): MediaHttpSource = MediaHttpSource(url = "https://media.w3.org/2010/05/sintel/trailer.mp4")
+
+    override suspend fun getEpisodeDanmakuDataList(episode: MediaEpisode): List<DanmakuData>
+        = emptyList()
+
+    override suspend fun getEpisodeDanmakuDataFlow(episode: MediaEpisode): DanmakuDataFlow? = null
 }
