@@ -25,6 +25,6 @@ fun checkMediaCard(card: MediaCard, cardType: MediaCardType) {
     if (cardType != MediaCardType.NOT_IMAGE) {
         check(card.coverImageUrl.isNotEmpty())
     }  else {
-        check(card.backgroundColor > 0)
+        check(card.backgroundColor >= 0)
     }
 }

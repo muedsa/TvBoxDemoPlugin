@@ -1,5 +1,6 @@
 package com.muedsa.tvbox.demoplugin.service
 
+import com.muedsa.tvbox.api.data.MediaCatalogOption
 import com.muedsa.tvbox.demoplugin.TestPlugin
 import com.muedsa.tvbox.demoplugin.checkMediaCard
 import kotlinx.coroutines.test.runTest
@@ -26,7 +27,7 @@ class MediaCatalogServiceTest {
     fun catalog_test() = runTest {
         val config = service.getConfig()
         val pagingResult = service.catalog(
-            options = config.catalogOptions,
+            options = MediaCatalogOption.getDefault(config.catalogOptions),
             loadKey = config.initKey,
             loadSize = config.pageSize
         )
