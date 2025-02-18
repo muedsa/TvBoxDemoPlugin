@@ -6,77 +6,105 @@ import com.muedsa.tvbox.api.data.MediaCatalogOption
 import com.muedsa.tvbox.api.data.MediaCatalogOptionItem
 import com.muedsa.tvbox.api.data.PagingResult
 import com.muedsa.tvbox.api.service.IMediaCatalogService
-import com.muedsa.tvbox.demoplugin.helper.splitListBySize
+import java.util.Calendar
 
 class MediaCatalogService(
-    private val danDanPlayApiService: DanDanPlayApiService
+    private val bangumiApiService: BangumiApiService,
 ) : IMediaCatalogService {
 
     override suspend fun getConfig(): MediaCatalogConfig {
-        val resp = danDanPlayApiService.getSeasonYearMonth()
-        if (resp.errorCode != 0) {
-            throw RuntimeException(resp.errorMessage)
-        }
         return MediaCatalogConfig(
             initKey = "1",
             pageSize = 20,
-            cardWidth = 210 / 2,
-            cardHeight = 302 / 2,
-            catalogOptions = buildList {
-                if (resp.seasons.isNotEmpty()) {
-                    add(
-                        MediaCatalogOption(
-                            name = "年份",
-                            value = "year",
-                            items = resp.seasons.map{ it.year }.distinct().mapIndexed { index, year ->
+            cardWidth = 150,
+            cardHeight = 212,
+            catalogOptions = listOf(
+                MediaCatalogOption(
+                    name = "类型",
+                    value = "cat",
+                    items = listOf(
+                        MediaCatalogOptionItem(
+                            name = "TV",
+                            value = "1",
+                        ),
+                        MediaCatalogOptionItem(
+                            name = "OVA",
+                            value = "2",
+                        ),
+                        MediaCatalogOptionItem(
+                            name = "Movie",
+                            value = "3",
+                        ),
+                        MediaCatalogOptionItem(
+                            name = "WEB",
+                            value = "5",
+                        ),
+                    ),
+                    required = false
+                ),
+                MediaCatalogOption(
+                    name = "年份",
+                    value = "year",
+                    items = buildList {
+                        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                        for (year in 2000..currentYear) {
+                            add(
                                 MediaCatalogOptionItem(
                                     name = year.toString(),
                                     value = year.toString(),
-                                    defaultChecked = index == 0
                                 )
-                            },
-                            required = true
+                            )
+                        }
+                    }.reversed(),
+                    required = false
+                ),
+                MediaCatalogOption(
+                    name = "月份",
+                    value = "month",
+                    items = buildList {
+                        for (month in 1..12) {
+                            add(
+                                MediaCatalogOptionItem(
+                                    name = month.toString(),
+                                    value = month.toString(),
+                                )
+                            )
+                        }
+                    },
+                    required = false
+                ),
+                MediaCatalogOption(
+                    name = "排序",
+                    value = "sort",
+                    items = listOf(
+                        MediaCatalogOptionItem(
+                            name = "时间",
+                            value = "date",
+                            defaultChecked = true
+                        ),
+                        MediaCatalogOptionItem(
+                            name = "评分",
+                            value = "rank",
                         )
-                    )
-                    val firstMonth = resp.seasons.first().month
-                    add(
-                        MediaCatalogOption(
-                            name = "月份",
-                            value = "month",
-                            items = buildList {
-                                for (month in 1 .. 12) {
-                                    add(
-                                        MediaCatalogOptionItem(
-                                            name = month.toString(),
-                                            value = month.toString(),
-                                            defaultChecked = month == firstMonth
-                                        )
-                                    )
-                                }
-                            },
-                            required = true
-                        )
-                    )
-
-                    add(
-                        MediaCatalogOption(
-                            name = "Other",
-                            value = "other",
-                            items = buildList {
-                                for (i in 0 .. 8) {
-                                    add(
-                                        MediaCatalogOptionItem(
-                                            name = "other$i",
-                                            value = i.toString(),
-                                        )
-                                    )
-                                }
-                            },
-                            multiple = true
-                        )
-                    )
-                }
-            }
+                    ),
+                    required = true
+                ),
+                MediaCatalogOption(
+                    name = "Other",
+                    value = "other",
+                    items = buildList {
+                        for (i in 0..8) {
+                            add(
+                                MediaCatalogOptionItem(
+                                    name = "other$i",
+                                    value = i.toString(),
+                                )
+                            )
+                        }
+                    },
+                    multiple = true
+                )
+            )
         )
     }
 
@@ -85,29 +113,32 @@ class MediaCatalogService(
         loadKey: String,
         loadSize: Int
     ): PagingResult<MediaCard> {
-        val pageIndex = loadKey.toInt() - 1
-        val year = options.find { option -> option.value == "year" }?.items[0]?.value ?: throw RuntimeException("年份为必选项")
-        val month = options.find { option -> option.value == "month" }?.items[0]?.value ?: throw RuntimeException("月份为必选项")
-        val resp = danDanPlayApiService.getSeasonAnime(year, month)
-        if (resp.errorCode != 0) {
-            throw RuntimeException(resp.errorMessage)
-        }
-        val pages = splitListBySize(resp.bangumiList, loadSize)
-        println("${pages.size}")
-        pages.forEach { t -> println("${t.size}") }
+        val cat = options.find { option -> option.value == "cat" }?.items[0]?.value
+        val year = options.find { option -> option.value == "year" }?.items[0]?.value
+        val month = options.find { option -> option.value == "month" }?.items[0]?.value
+        val sort = options.find { option -> option.value == "sort" }?.items[0]?.value
+            ?: throw RuntimeException("排序为必选项")
+        val flow = bangumiApiService.subjects(
+            type = 2,
+            cat = cat?.toInt(),
+            year = year?.toInt(),
+            month = month?.toInt(),
+            sort = sort,
+            offset = loadKey.toInt(),
+            limit = loadSize,
+        )
         return PagingResult<MediaCard>(
-            list = if (pageIndex >= 0 && pageIndex < pages.size) {
-                pages[pageIndex].map {
-                    MediaCard(
-                        id = it.animeId.toString(),
-                        title = it.animeTitle,
-                        detailUrl = it.animeId.toString(),
-                        coverImageUrl = it.imageUrl
-                    )
-                }
-            } else emptyList(),
-            nextKey = if (pageIndex + 1 < pages.size) "${pageIndex + 2}" else null,
-            prevKey = if (pageIndex - 1 >= 0) "$pageIndex" else null
+            list = flow.data.map {
+                MediaCard(
+                    id = it.id.toString(),
+                    title = if (it.nameCn.isNotBlank()) it.nameCn else it.name,
+                    subTitle = it.platform,
+                    detailUrl = it.id.toString(),
+                    coverImageUrl = it.images.large,
+                )
+            },
+            nextKey = if (flow.data.isNotEmpty()) (flow.offset + flow.data.size).toString() else null,
+            prevKey = null
         )
     }
 }

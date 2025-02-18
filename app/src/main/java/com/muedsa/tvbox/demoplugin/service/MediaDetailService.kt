@@ -10,41 +10,53 @@ import com.muedsa.tvbox.api.data.SavedMediaCard
 import com.muedsa.tvbox.api.service.IMediaDetailService
 
 class MediaDetailService(
-    private val danDanPlayApiService: DanDanPlayApiService
+    private val bangumiApiService: BangumiApiService,
 ) : IMediaDetailService {
 
     override suspend fun getDetailData(mediaId: String, detailUrl: String): MediaDetail {
-        val resp = danDanPlayApiService.getAnime(mediaId.toInt())
-        if (resp.errorCode != 0) {
-            throw RuntimeException(resp.errorMessage)
-        }
-        val bangumi = resp.bangumi ?: throw RuntimeException("bangumi not found")
+        val subject = bangumiApiService.subject(subjectId = mediaId.toLong())
+        val episodeFlow = bangumiApiService.episodes(
+            subjectId = mediaId.toLong(),
+            offset = 0,
+            limit = if (subject.eps < 100) subject.eps else 100,
+        )
         return MediaDetail(
-            id = bangumi.animeId.toString(),
-            title = bangumi.animeTitle,
-            subTitle = bangumi.typeDescription,
-            description = bangumi.summary,
-            detailUrl = bangumi.animeId.toString(),
-            backgroundImageUrl = bangumi.imageUrl,
+            id = subject.id.toString(),
+            title = if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name,
+            subTitle = subject.metaTags.joinToString(" | "),
+            description = subject.summary,
+            detailUrl = subject.id.toString(),
+            backgroundImageUrl = subject.images.large,
             playSourceList = listOf(
                 MediaPlaySource(
                     id = "bangumi",
                     name = "bangumi",
-                    episodeList = bangumi.episodes.map {
+                    episodeList = episodeFlow.data.mapIndexed { index, item ->
+                        var name = item.nameCn
+                        if (name.isBlank()) {
+                            name = item.name
+                        }
+                        if (name.isBlank()) {
+                            name = if (subject.platform == "剧场版") {
+                                if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name
+                            } else {
+                                "第${index + 1}集"
+                            }
+                        }
                         MediaEpisode(
-                            id = it.episodeId.toString(),
-                            name = it.episodeTitle
+                            id = item.id.toString(),
+                            name = name,
                         )
                     }
                 )
             ),
             favoritedMediaCard = SavedMediaCard(
-                id = bangumi.animeId.toString(),
-                title = bangumi.animeTitle,
-                detailUrl = bangumi.animeId.toString(),
-                coverImageUrl = bangumi.imageUrl,
-                cardWidth = 210 / 2,
-                cardHeight = 302 / 2,
+                id = subject.id.toString(),
+                title = if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name,
+                detailUrl = subject.id.toString(),
+                coverImageUrl = subject.images.large,
+                cardWidth = 150,
+                cardHeight = 212,
             )
         )
     }

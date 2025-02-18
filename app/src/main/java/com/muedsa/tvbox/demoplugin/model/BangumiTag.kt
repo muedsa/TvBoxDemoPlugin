@@ -4,7 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BangumiTitle(
-    @SerialName("language") val language: String,
-    @SerialName("title") val title: String
+data class BangumiTag(
+    @SerialName("name") val name: String,
+    @SerialName("count") val count: Int,
+    // total_cont
 )

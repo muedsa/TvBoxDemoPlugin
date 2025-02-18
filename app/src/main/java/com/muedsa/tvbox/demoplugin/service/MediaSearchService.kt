@@ -3,28 +3,37 @@ package com.muedsa.tvbox.demoplugin.service
 import com.muedsa.tvbox.api.data.MediaCard
 import com.muedsa.tvbox.api.data.MediaCardRow
 import com.muedsa.tvbox.api.service.IMediaSearchService
+import com.muedsa.tvbox.demoplugin.model.SearchSubjectsFilter
+import com.muedsa.tvbox.demoplugin.model.SearchSubjectsParams
 
 class MediaSearchService(
-    private val danDanPlayApiService: DanDanPlayApiService
+    private val bangumiApiService: BangumiApiService,
 ) : IMediaSearchService {
     override suspend fun searchMedias(query: String): MediaCardRow {
-        val resp = danDanPlayApiService.searchAnime(keyword = query)
-        if (resp.errorCode != 0) {
-            throw RuntimeException(resp.errorMessage)
-        }
+        val params = SearchSubjectsParams(
+            keyword = query,
+            filter = SearchSubjectsFilter(
+                type = listOf(2)
+            )
+        )
+        var resp = bangumiApiService.searchSubjects(
+            body = params,
+            offset = 0,
+            limit = 20,
+        )
         return MediaCardRow(
             title = "search list",
-            cardWidth = 210 / 2,
-            cardHeight = 302 / 2,
-            list = resp.animes?.map {
+            cardWidth = 150,
+            cardHeight = 212,
+            list = resp.data.map {
                 MediaCard(
-                    id = it.animeId.toString(),
-                    title = it.animeTitle,
-                    detailUrl = it.animeId.toString(),
-                    coverImageUrl = it.imageUrl,
-                    subTitle = it.startOnlyDate
+                    id = it.id.toString(),
+                    title = if (it.nameCn.isNotBlank()) it.nameCn else it.name,
+                    subTitle = it.platform,
+                    detailUrl = it.id.toString(),
+                    coverImageUrl = it.images.large,
                 )
-            } ?: emptyList()
+            }
         )
     }
 }

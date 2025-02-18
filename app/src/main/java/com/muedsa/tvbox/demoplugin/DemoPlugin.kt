@@ -8,7 +8,7 @@ import com.muedsa.tvbox.api.service.IMediaCatalogService
 import com.muedsa.tvbox.api.service.IMediaDetailService
 import com.muedsa.tvbox.api.service.IMediaSearchService
 import com.muedsa.tvbox.api.store.IPluginPerfStore
-import com.muedsa.tvbox.demoplugin.service.DanDanPlayApiService
+import com.muedsa.tvbox.demoplugin.service.BangumiApiService
 import com.muedsa.tvbox.demoplugin.service.MainScreenService
 import com.muedsa.tvbox.demoplugin.service.MediaCatalogService
 import com.muedsa.tvbox.demoplugin.service.MediaDetailService
@@ -36,10 +36,10 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
         store.update(key = LAUNCH_COUNT_PREF_KEY, value = count)
     }
 
-    private val danDanPlayApiService by lazy {
+    private val bangumiApiService by lazy {
         createJsonRetrofit(
-            baseUrl = "https://api.dandanplay.net/api/",
-            service = DanDanPlayApiService::class.java,
+            baseUrl = "https://api.bgm.tv/",
+            service = BangumiApiService::class.java,
             okHttpClient = createOkHttpClient(
                 debug = tvBoxContext.debug,
                 cookieJar = PluginCookieJar(saver = cookieSaver),
@@ -47,10 +47,11 @@ class DemoPlugin(tvBoxContext: TvBoxContext) : IPlugin(tvBoxContext = tvBoxConte
             )
         )
     }
-    private val mainScreenService by lazy { MainScreenService(danDanPlayApiService) }
-    private val mediaDetailService by lazy { MediaDetailService(danDanPlayApiService) }
-    private val mediaSearchService by lazy { MediaSearchService(danDanPlayApiService) }
-    private val mediaCatalogService by lazy { MediaCatalogService(danDanPlayApiService) }
+
+    private val mainScreenService by lazy { MainScreenService(bangumiApiService) }
+    private val mediaDetailService by lazy { MediaDetailService(bangumiApiService) }
+    private val mediaSearchService by lazy { MediaSearchService(bangumiApiService) }
+    private val mediaCatalogService by lazy { MediaCatalogService(bangumiApiService) }
 
     override fun provideMainScreenService(): IMainScreenService = mainScreenService
 
