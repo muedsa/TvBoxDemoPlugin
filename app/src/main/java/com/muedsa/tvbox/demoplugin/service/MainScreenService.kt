@@ -18,7 +18,7 @@ class MainScreenService(
                 list = it.items.map { b ->
                     MediaCard(
                         id = b.id.toString(),
-                        title = if(b.nameCn.isNotBlank()) b.nameCn else b.name,
+                        title = b.nameCn.ifBlank { b.name },
                         subTitle = b.airDate,
                         detailUrl = b.id.toString(),
                         coverImageUrl = b.images.large,

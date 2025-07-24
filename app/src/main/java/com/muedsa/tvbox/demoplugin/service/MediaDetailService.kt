@@ -22,7 +22,7 @@ class MediaDetailService(
         )
         return MediaDetail(
             id = subject.id.toString(),
-            title = if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name,
+            title = subject.nameCn.ifBlank { subject.name },
             subTitle = subject.metaTags.joinToString(" | "),
             description = subject.summary,
             detailUrl = subject.id.toString(),
@@ -38,7 +38,7 @@ class MediaDetailService(
                         }
                         if (name.isBlank()) {
                             name = if (subject.platform == "剧场版") {
-                                if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name
+                                subject.nameCn.ifBlank { subject.name }
                             } else {
                                 "第${index + 1}集"
                             }
@@ -52,7 +52,7 @@ class MediaDetailService(
             ),
             favoritedMediaCard = SavedMediaCard(
                 id = subject.id.toString(),
-                title = if (subject.nameCn.isNotBlank()) subject.nameCn else subject.name,
+                title = subject.nameCn.ifBlank { subject.name },
                 detailUrl = subject.id.toString(),
                 coverImageUrl = subject.images.large,
                 cardWidth = 150,

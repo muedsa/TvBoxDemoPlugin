@@ -127,11 +127,11 @@ class MediaCatalogService(
             offset = loadKey.toInt(),
             limit = loadSize,
         )
-        return PagingResult<MediaCard>(
+        return PagingResult(
             list = flow.data.map {
                 MediaCard(
                     id = it.id.toString(),
-                    title = if (it.nameCn.isNotBlank()) it.nameCn else it.name,
+                    title = it.nameCn.ifBlank { it.name },
                     subTitle = it.platform,
                     detailUrl = it.id.toString(),
                     coverImageUrl = it.images.large,
