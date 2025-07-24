@@ -16,7 +16,7 @@ class MediaSearchService(
                 type = listOf(2)
             )
         )
-        var resp = bangumiApiService.searchSubjects(
+        val resp = bangumiApiService.searchSubjects(
             body = params,
             offset = 0,
             limit = 20,
