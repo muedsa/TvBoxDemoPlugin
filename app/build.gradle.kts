@@ -19,12 +19,12 @@ if (keystorePropertiesFile.exists() && keystorePropertiesFile.canRead()) {
 
 android {
     namespace = "com.muedsa.tvbox.demoplugin"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.muedsa.tvbox.demoplugin"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.0.1"
     }
@@ -80,8 +80,8 @@ kotlin {
 
 dependencies {
     //implementation(libs.androidx.core.ktx)
-    compileOnly(project(":api"))
-    testImplementation(project(":api"))
+    compileOnly(libs.tvbox.api)
+    testImplementation(libs.tvbox.api)
     testImplementation(libs.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
 }
